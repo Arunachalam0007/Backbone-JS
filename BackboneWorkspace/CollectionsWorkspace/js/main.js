@@ -33,6 +33,11 @@ Dogs.add(
         color: "White"
     })
 );
+// add based on index
+Dogs.add(new AnimalsModel({
+    dogName:'Puge',
+    color:'brown'
+}),{at:0}); 
 
 
 // get the models in the collecion object
@@ -40,21 +45,32 @@ Dogs.add(
 var dog1 = Dogs.at(0);
 
 var dog2 = Dogs.get("c2"); // we can also get using backbone ID
-// console.log("Dog 1 and 2 is :");
-// console.log(dog1);
-// console.log(dog2);
+
 // remove the models in the collecion object
 Dogs.remove(dog1);
-// console.log(Dogs);
 
+//push insert the object into last index of the array
+Dogs.push(new AnimalsModel({
+    dogName: "Golden",
+    color: "Gold"
+}));
 
-//Underscore methods 
+//Pop remove last indexo of an array
+Dogs.pop();
 
-//push 
-//pop
 
 var object = Dogs.where({ color: "White" }); // It returns Array 
 console.log(object);
 
 var firstObject = Dogs.findWhere({ color: "White" }); // It returns first instance
 console.log(firstObject);
+
+
+//Filter method we can creat a custom functions
+
+var filderDogName = Dogs.filter(function(dog){
+    console.log(dog);
+    return dog.get("dogName")===('Puge');
+});
+
+console.log(filderDogName);
