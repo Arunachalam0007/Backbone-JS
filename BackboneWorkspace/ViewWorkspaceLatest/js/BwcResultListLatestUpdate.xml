@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://documentum.emc.com/2010/UI-Model"
+        id="xcp_results_list" xtype="xcp_results_list" version="1.0.0000.001">
+    <name>Results List</name>
+    <description>Display a table of data from any data service.</description>
+    <dependencies>
+        <dependency componentId="xcp_results_list_column"/>
+        <dependency componentId="xcp_results_list_page_link_column"/>
+        <dependency componentId="xcp_folder_list_lock_column"/>
+        <dependency componentId="xcp_folder_list_page_link_column"/>
+        <dependency componentId="xcp_pagingtoolbar"/>
+        <dependency componentId="xcp_facet_manager"/>
+        <dependency componentId="xcp_droptarget_mixin"/>
+        <dependency componentId="xcp_sync_grid_with_ctx_menu_mixin"/>
+        <dependency componentId="xcp_stateprovider"/>
+        <dependency componentId="xcp_results_list"/>		
+	<dependency componentId="xcp_expression_lib" />
+    </dependencies>
+    <icon src="icons/resultslist_wig.png" width="16" height="16" />
+    <icon src="icons/resultslist_24_wig.png" width="24" height="24" />
+    <icon src="icons/grid-row-btn.png" width="28" height="200" />
+
+
+    <!-- <content src="content/xcp/widget/grid/facets/SelectedFacetModel.js" type="text/javascript"/>
+    <content src="content/xcp/widget/grid/facets/SelectedFacets.js" type="text/javascript" nls="xcp/widget/grid/facets/SelectedFacets-strings.js"/>
+    <content src="content/xcp/widget/grid/facets/SimpleFacetModel.js" type="text/javascript"/>
+    <content src="content/xcp/widget/grid/facets/SimpleFacet.js" type="text/javascript" nls="xcp/widget/grid/facets/SimpleFacet-strings.js"/>
+    <content src="content/xcp/widget/grid/facets/FacetContainer.js" type="text/javascript"/>
+    <content src="content/xcp/widget/grid/facets/FacetBreadcrumb.js" type="text/javascript"/>
+    <content src="content/xcp/widget/grid/InlineEditingMixin.js" type="text/javascript"/>
+    <content src="content/xcp/widget/grid/designer/View.js" type="text/javascript" mode="design"/> -->
+
+    <content src="content/widget/grid/ResultsList.js" type="text/javascript" nls="widget/grid/BWCResultsList-strings.js"/>
+	<content src="content/widget/grid/ExpressionOverrides.js" type="text/javascript"/>
+	<content src="content/widget/grid/BwcInfoCopiesPlugin.js" type="text/javascript"/>
+	<content src="content/widget/grid/BwcCasePlugin.js" type="text/javascript"/>
+	<content src="content/widget/grid/designer/ResultsList.js" type="text/javascript" nls="widget/grid/designer/BWCResultsList-strings.js" mode="design"/>
+	<content src="content/widget/grid/designer/GridOverrides.js" type="text/javascript" mode="design"/>
+    <content src="content/widget/plugin/DistributionItemSortingAlgorithm.js" type="text/javascript"/>
+	<content src="content/widget/plugin/ProofreadingActionFlowPlugin.js" type="text/javascript"/>
+	<content src="content/widget/plugin/ChangeResultsListSortIconPlugin.js" type="text/javascript" />
+	<content src="content/widget/plugin/AgendaCellColoringPlugin.js" type="text/javascript" />
+	<content src="content/widget/plugin/AgendaGroupingPlugin.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/ChainingRendererBase.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/ClassificationColorChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/ClassificationLockIconChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/DateDashRemovalChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/DoubleClickTaskNavigator.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/PriorityColorChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/ResultListSortIconChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/TaskPageLinkChainingRenderer.js" type="text/javascript" />
+	<content src="content/widget/plugin/grid/CaseCommentCellEditingPlugin.js" type="text/javascript" />
+
+    <category>xcpPalette:List</category>
+
+    <configuration>
+        <propertyInfo name="title" localizable="true">
+            <label>Title</label>
+            <type>STRING</type>
+            <constraint>
+	            <validator type="maxLength" maxLength="60"/>
+            </constraint>
+        </propertyInfo>
+        <propertyInfo name="typeName">
+            <label>Type</label>
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="modelName">
+            <label>Data service instance</label>
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="storeId">
+            <type>STRING</type>
+        </propertyInfo>
+		<propertyInfo name="initParams">
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="columns" array="true">
+            <label>Columns</label>
+            <type>OBJECT</type>
+            <containment>
+            	<include>xcp_results_list_column</include>
+            	<include>xcp_results_list_page_link_column</include>
+            	<include>xcp_results_list_email_link_column</include>
+            </containment>
+        </propertyInfo>
+        <propertyInfo name="selectionModelName" hidden="true">
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="pageSize">
+            <label>Height</label>
+            <description>Number of rows to display.</description>
+            <type>INTEGER</type>
+            <defaultvalue>25</defaultvalue>
+             <constraint>
+	            <validator type="inputDigit" allowZero="false" allowNegative="false"/>
+            </constraint>
+        </propertyInfo>
+        <propertyInfo name="maxHeight">
+			<label>Maximum Height</label>
+			<description>Maximum height of the table in pixels (does not appear in designer).</description>
+			<type>INTEGER</type>
+			<defaultvalue>700</defaultvalue>
+			<constraint>
+				<validator type="inputDigit" allowZero="false" allowNegative="false"/>
+			</constraint>
+		</propertyInfo>
+        <propertyInfo name="maxHeightExpression">
+			<label>Height Expression (takes precedence over 'Maximum Height' field)</label>
+			<type>EXPRESSION</type>
+			<expression>
+				<setterFunName>setHeight</setterFunName>
+				<valueType>INTEGER</valueType>
+				<contextTree>
+					<include>PRIMARY_CONTEXT</include>
+					<include>APP_CONTEXT</include>
+					<include>WIDGET_CONTEXT</include>
+					<include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+					<include>UI_EVENTS</include>
+					<include>SESSION_PARAMETERS</include>
+					<include>FRAGMENT_INPUT</include>
+				</contextTree>
+			</expression>
+		</propertyInfo>
+		<propertyInfo name="scrollingLoadThreshold">
+			<label>Scrolling load threshold</label>
+			<description>Percentage of page scrolled before more next page should be loaded</description>
+			<type>INTEGER</type>
+			<defaultvalue>70</defaultvalue>
+			<constraint>
+				<validator type="inputDecimal" allowZero="false" allowNegative="false"/>
+			</constraint>
+		</propertyInfo>	
+        <propertyInfo name="hidden" eventBased="true">
+            <label>Hidden when</label>
+            <actionLabelForEvent>${ActionLabelForHide}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setHidden</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+				<disableProcessingOnRender>true</disableProcessingOnRender>
+                <initialDefaultExprValue>true</initialDefaultExprValue>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="facets" array="true">
+            <label>Facets</label>
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="facetLabels" array="true">
+            <label>Facets</label>
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="selectionModel">
+            <label>Allow selection of multiple items</label>
+            <type>BOOLEAN</type>
+			<defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="cls">
+            <label>CSS class</label>
+            <type>STRING</type>
+            <defaultvalue/>
+        </propertyInfo>
+        <propertyInfo name="bwcPlugins">
+			<label>Plugin Name</label>
+			<type>STRING</type>
+		</propertyInfo>
+		<propertyInfo name="checkboxSelectionRequired">
+			<label>Checkbox Selection Model Required</label>
+			<type>BOOLEAN</type>
+		</propertyInfo>
+		<propertyInfo name="showHeaderCheckbox">
+			<label>Show header checkbox (only applies if multiple selections allowed)</label>
+			<type>BOOLEAN</type>
+			<defaultvalue>false</defaultvalue>
+		</propertyInfo>
+        <propertyInfo name="enableDragDrop">
+            <label>Enable Drag And Drop</label>
+            <type>BOOLEAN</type>
+            <defaultvalue>true</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="disableNavigationOnFirstColumn">
+            <label>Disable Default Navigation</label>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="hideContextMenu" eventBased="true">
+            <label>Context Menu Hidden when</label>
+            <actionLabelForEvent>${ActionLabelForHideCtxMenu}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setContextMenuHidden</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+                <initialDefaultExprValue>false</initialDefaultExprValue>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="allowDeselect">
+            <label>Allow Deselect</label>
+            <description>Only applicable when the mode is 'SINGLE'.</description>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="displayTotalRowCount">
+            <label>Display total row count</label>
+            <description>Display total number of row count on right hand side corner.</description>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="autoTotalCount">
+            <label>Total Count</label>
+            <description>Use query count attribute for displaying total count</description>
+            <type>BOOLEAN</type>
+            <defaultvalue>true</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="totalRowCountExpression">
+            <label>Total Row Count Expression</label>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setTotalRowCount</setterFunName>
+                <valueType>INTEGER</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="autoSelection">
+            <label>Auto Select first row of the grid</label>
+            <description>Auto Select first row of the grid</description>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="firstSelectedRow" eventBased="true">
+			<label>First selected row</label>
+			<description>The ID of the row to select first</description>
+			<type>EXPRESSION</type>
+			<expression>
+				<setterFunName>setFirstSelectedRow</setterFunName>
+				<contextTree>
+					<include>PRIMARY_CONTEXT</include>
+					<include>APP_CONTEXT</include>
+					<include>WIDGET_CONTEXT</include>
+					<include>DATASOURCE_OUTPUT</include>
+					<include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+					<include>UI_EVENTS</include>
+					<include>SESSION_PARAMETERS</include>
+					<include>FRAGMENT_INPUT</include>
+				</contextTree>
+				<enableExplicitEventSubscription>true</enableExplicitEventSubscription>
+			</expression>
+		</propertyInfo>
+        <propertyInfo name="pageSizeList">
+            <label>List of available Page Sizes</label>
+            <type>STRING</type>
+            <defaultvalue>10,25,50,100</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="stateful">
+            <label>Preserve Runtime Changes</label>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="stateid">
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="setFacets" eventBased="true">
+            <label>Set Facets</label>
+            <actionLabelForEvent>${ActionLabelForSetFacets}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression repeatingValue="true">
+                <setterFunName>setFacets</setterFunName>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="allowInLineEdit">
+            <label>Allow inline editing</label>
+            <type>BOOLEAN</type>
+            <defaultvalue>false</defaultvalue>
+        </propertyInfo>
+        <propertyInfo name="dataSourceType">
+            <label>Data source type</label>
+            <type>STRING</type>
+            <defaultvalue></defaultvalue>
+            <valueassist fixed="true">
+                <item><value>RepeatingModelAttributes</value><label>Repeating model attributes</label></item>
+                <item><value>DataServices</value><label>Data Services</label></item>
+            </valueassist>
+        </propertyInfo>
+        <propertyInfo name="dataInstance">
+            <label>Data Instance</label>
+            <type>EXPRESSION</type>
+            <expression repeatingValue="false">
+                <setterFunName>setDataInstanceModel</setterFunName>
+                <valueType>ANY</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <evaluateInitialOnly>true</evaluateInitialOnly>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="modelStore">
+            <label>Data source</label>
+            <type>STRING</type>
+        </propertyInfo>
+        <propertyInfo name="width">
+            <label>Width</label>
+            <description>the width of the image.</description>
+            <helptext/>
+            <type>INTEGER</type>
+        </propertyInfo>
+        <propertyInfo name="height">
+            <label>Height</label>
+            <description>the height of the image.</description>
+            <helptext/>
+            <type>INTEGER</type>
+        </propertyInfo>
+        <propertyInfo name="hideadd" eventBased="true">
+            <label>Hide Add Button</label>
+            <actionLabelForEvent>${ActionLabelForAddButtonHide}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setAddBtnHidden</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="hideremove" eventBased="true">
+            <label>Hide Remove Button</label>
+            <actionLabelForEvent>${ActionLabelForRemoveButtonHide}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setRemoveBtnHidden</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="hidemovebtn" eventBased="true">
+            <label>Hide Move Button</label>
+            <actionLabelForEvent>${ActionLabelForMoveButtonHide}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setMoveBtnHidden</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="disableadd" eventBased="true">
+            <label>Diable Add Button</label>
+            <actionLabelForEvent>${ActionLabelForAddButtonDisable}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setAddBtnDisable</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="disableremove" eventBased="true">
+            <label>Disable Remove Button</label>
+            <actionLabelForEvent>${ActionLabelForRemoveButtonDisable}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setRemoveBtnDisable</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+        <propertyInfo name="disablemovebtn" eventBased="true">
+            <label>Disable Move Button</label>
+            <actionLabelForEvent>${ActionLabelForMoveButtonDisable}</actionLabelForEvent>
+            <type>EXPRESSION</type>
+            <expression>
+                <setterFunName>setMoveBtnDisable</setterFunName>
+                <valueType>BOOLEAN</valueType>
+                <contextTree>
+                    <include>PRIMARY_CONTEXT</include>
+                    <include>APP_CONTEXT</include>
+                    <include>WIDGET_CONTEXT</include>
+                    <include>SINGLE_OBJECT_DATA_SERVICE_OUTPUT</include>
+                    <include>UI_EVENTS</include>
+                    <include>SESSION_PARAMETERS</include>
+                    <include>FRAGMENT_INPUT</include>
+                </contextTree>
+                <disableProcessingOnRender>true</disableProcessingOnRender>
+            </expression>
+        </propertyInfo>
+    </configuration>
+
+    <expressionProperties>
+        <propertyInfo name="selected_row">
+            <label>Selected Row(s)</label>
+            <type>MODEL</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsList.getValueFromSelectionModel</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                    <argument>PROPERTY_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="selectionchange"/>
+                <eventInfo name="rowedited"/>
+                <eventInfo name="rowadded"/>
+                <eventInfo name="rowremoved"/>
+                <eventInfo name="rowmoved"/>
+            </changeEvents>
+        </propertyInfo>
+        <propertyInfo name="selected_column_index">
+            <label>Selected Column Index</label>
+            <type>INTEGER</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsList.getSelectedCellIndex</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                    <argument>PROPERTY_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="cellclicked"/>
+                <eventInfo name="celldblclicked"/>
+            </changeEvents>
+        </propertyInfo>
+        <propertyInfo name="selected_row_index">
+            <label>Selected Row Index</label>
+            <type>INTEGER</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsList.getSelectedRowIndex</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                    <argument>PROPERTY_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="cellclicked"/>
+                <eventInfo name="celldblclicked"/>
+            </changeEvents>
+        </propertyInfo>
+        <propertyInfo name="selected_facets" array="true">
+            <label>Selected Facets</label>
+            <type>STRING</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsList.getSelectedFacets</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="facetsselectionchange"/>
+            </changeEvents>
+        </propertyInfo>
+        <propertyInfo name="all_rows" array="true">
+            <label>All Rows</label>
+            <type>MODEL</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsListGrid.getAllRows</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                    <argument>PROPERTY_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="rowedited"/>
+                <eventInfo name="rowadded"/>
+                <eventInfo name="rowremoved"/>
+                <eventInfo name="rowmoved"/>
+                <eventInfo name="load"/>
+            </changeEvents>
+        </propertyInfo>
+        <propertyInfo name="last_removed_row">
+            <label>Last Removed Row(s)</label>
+            <type>MODEL</type>
+            <getterFun>
+                <name>xcp.widget.grid.ResultsListGrid.getLastRemovedRow</name>
+                <arguments>
+                    <argument>EVALUATION_CONTEXT</argument>
+                    <argument>WIDGET_ID</argument>
+                    <argument>PROPERTY_ID</argument>
+                </arguments>
+            </getterFun>
+            <changeEvents>
+                <eventInfo name="rowremoved"/>
+                <eventInfo name="load"/>
+            </changeEvents>
+        </propertyInfo>
+    </expressionProperties>
+
+    <events>
+        <eventInfo name="selectionchange"/>
+        <eventInfo name="cellclicked"/>
+        <eventInfo name="celldblclicked"/>
+        <eventInfo name="facetsselectionchange"/>
+        <eventInfo name="roweditstart"/>
+        <eventInfo name="rowedited"/>
+        <eventInfo name="load"/>
+        <eventInfo name="hide"/>
+        <eventInfo name="show"/>
+        <eventInfo name="disable"/>
+        <eventInfo name="enable"/>
+        <eventInfo name="rowadded"/>
+        <eventInfo name="rowremoved"/>
+        <eventInfo name="rowmoved"/>
+        <eventInfo name="itemdblclick"/>
+    </events>
+
+</container>

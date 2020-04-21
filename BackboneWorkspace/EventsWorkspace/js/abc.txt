@@ -1,0 +1,62 @@
+# generator-csui-extension
+
+> [Yeoman](http://yeoman.io) generator for CS UI extensions
+
+## Pre-requisites
+
+The following tools have to be installed, before you start:
+
+* NodeJS 4 or newer
+* Python 2 (the most recent 2.x)
+* Git
+* Grunt command line tool:
+
+```bash
+npm install -g grunt-cli
+```
+
+## Getting Started
+
+Install the generator globally. Do not delete the directory, where you unpack
+the generator package:
+
+```bash
+npm install -g yo
+
+unzip generator-csui-extension.zip
+cd generator-csui-extension
+npm link
+```
+
+Generate a new project (*verify that you are not in the
+`generator-csui-extension` directory*):
+
+```bash
+mkdir my-extension
+cd my-extension
+yo csui-extension
+```
+
+Build the generated project:
+
+```bash
+grunt
+```
+
+## Adding Content
+
+You can add a new widget with a sample model, factory and view, which you can
+start with and modify according to your goal, by the `widget` sub-generator:
+
+```bash
+yo csui-extension:widget
+```
+
+Rebuild the updated project:
+
+```bash
+grunt
+```
+
+You also can copy samples from the CS UI SDK into this project and follow the
+respective documentation.
